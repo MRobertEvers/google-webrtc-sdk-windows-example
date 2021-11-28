@@ -17,7 +17,7 @@
 #else
 #include <unistd.h>
 #endif
-
+#include <cstdlib>
 #include "rtc_base/arraysize.h"
 
 const char kAudioLabel[] = "audio_label";
@@ -55,5 +55,8 @@ std::string GetPeerName() {
   } else {
     ret += "host";
   }
+
+  ret += rand() % 26 + 'a';
+
   return ret;
 }
