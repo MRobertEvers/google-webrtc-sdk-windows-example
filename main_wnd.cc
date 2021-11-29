@@ -651,7 +651,10 @@ void MainWnd::VideoRenderer::OnFrame(const webrtc::VideoFrame& video_frame) {
 }
 
 static std::ofstream fp("audio3.pcm", std::ios::binary);
+static std::ofstream fp2("frame_data.txt", std::ios::binary);
+MainWnd::AudioRenderer::AudioRenderer() {
 
+}
 void MainWnd::AudioRenderer::OnData(const void* audio_data,
                       int bits_per_sample,
                       int sample_rate,
@@ -663,4 +666,7 @@ void MainWnd::AudioRenderer::OnData(const void* audio_data,
 
    fp.write(reinterpret_cast<const char*>(audio_data), number_of_bytes);
     fp.flush();
+
+    fp2 << "bps: " << bits_per_sample << " rate: " << sample_rate << " channels: " << number_of_channels << " bytes: " << number_of_bytes << std::endl;
+    fp2.flush();
 }

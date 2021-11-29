@@ -120,6 +120,7 @@ class MainWnd : public MainWindow {
 
     class AudioRenderer : public webrtc::AudioTrackSinkInterface {
      public:
+        AudioRenderer();
   virtual ~AudioRenderer() {}
 
   

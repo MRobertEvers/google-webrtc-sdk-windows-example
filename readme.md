@@ -27,3 +27,35 @@ Back in the browser, make sure loopback is set, then type `Target peer id` to `1
 ## Debugging
 
 You can debug the executables normally using Visual Studio. Simply open the .exe in Visual Studio and add the source files to the project.
+
+## Hacks
+
+I've hacked on this a bit for some testing.
+
+I added a (LEAKS MEMORY!!) AudioTrackSink to the audio track and saved the data to a file.
+
+(As of writing this hack, the code writes the audio frame data to `audio3.pcm` and frame metadata to `frame_data.txt`)
+
+Notice, like the video frames, sometimes audio frames come in ad different parameters.
+
+I simply opened the audio file in audacity (import -> Raw Data) with 1 channel, 48000 Hz, 16 bit signed.
+
+```
+# frame_data.txt
+bps: 16 rate: 16000 channels: 1 bytes: 320
+bps: 16 rate: 16000 channels: 1 bytes: 320
+bps: 16 rate: 16000 channels: 1 bytes: 320
+bps: 16 rate: 16000 channels: 1 bytes: 320
+bps: 16 rate: 16000 channels: 1 bytes: 320
+bps: 16 rate: 16000 channels: 1 bytes: 320
+bps: 16 rate: 16000 channels: 1 bytes: 320
+bps: 16 rate: 48000 channels: 1 bytes: 960
+bps: 16 rate: 48000 channels: 1 bytes: 960
+bps: 16 rate: 48000 channels: 1 bytes: 960
+bps: 16 rate: 48000 channels: 1 bytes: 960
+bps: 16 rate: 48000 channels: 1 bytes: 960
+bps: 16 rate: 48000 channels: 1 bytes: 960
+bps: 16 rate: 48000 channels: 1 bytes: 960
+bps: 16 rate: 48000 channels: 1 bytes: 960
+bps: 16 rate: 48000 channels: 1 bytes: 960
+```
