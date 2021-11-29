@@ -13,7 +13,7 @@
 #include <windows.h>
 #include <shellapi.h>  // must come after windows.h
 // clang-format on
-#include<thread>
+#include <thread>
 
 #include <string>
 #include <vector>
@@ -82,8 +82,6 @@ int PASCAL wWinMain(HINSTANCE instance,
                     HINSTANCE prev_instance,
                     wchar_t* cmd_line,
                     int cmd_show) {
-
-
   WindowsCommandLineArguments win_args;
   int argc = win_args.argc();
   char** argv = win_args.argv();
@@ -116,20 +114,16 @@ int PASCAL wWinMain(HINSTANCE instance,
   rtc::scoped_refptr<Conductor> conductor(
       new rtc::RefCountedObject<Conductor>(&client, &wnd));
 
-  auto caller_task_queue = webrtc::TaskQueueBase::Current();
-  if (caller_task_queue) {
-   std::cout << "Wow";
-  }
-   std::thread thread_object([&]() {
-      rtc::WinsockInitializer winsock_init;
-      rtc::PhysicalSocketServer ss;
-      rtc::AutoSocketServerThread main_thread(&ss);
-      auto tt = webrtc::TaskQueueBase::Current();
-      if (tt) {
-         wnd.SetQueue(tt);
-      std::cout << "Wow";}
-      main_thread.Run();
-   });
+  std::thread thread_object([&]() {
+    rtc::WinsockInitializer winsock_init;
+    rtc::PhysicalSocketServer ss;
+    rtc::AutoSocketServerThread main_thread(&ss);
+    auto tt = webrtc::TaskQueueBase::Current();
+    if (tt) {
+      wnd.SetQueue(tt);
+    }
+    main_thread.Run();
+  });
 
   // Main loop.
   MSG msg;

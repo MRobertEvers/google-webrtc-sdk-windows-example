@@ -18,7 +18,8 @@
 #include "rtc_base/checks.h"
 #include "rtc_base/logging.h"
 #include "third_party/libyuv/include/libyuv/convert_argb.h"
-
+#include <iostream>
+#include <fstream>
 ATOM MainWnd::wnd_class_ = 0;
 const wchar_t MainWnd::kClassName[] = L"WebRTC_MainWnd";
 
@@ -231,6 +232,11 @@ void MainWnd::StopRemoteRenderer() {
   remote_renderer_.reset();
 }
 
+  void MainWnd::StartAudioLook(
+      webrtc::AudioTrackInterface* audio_track) {
+        audio_track->AddSink(new AudioRenderer());
+      }
+
 void MainWnd::QueueUIThreadCallback(int msg_id, void* data) {
   ::PostThreadMessage(ui_thread_id_, UI_THREAD_CALLBACK,
                       static_cast<WPARAM>(msg_id),
@@ -344,8 +350,8 @@ void MainWnd::OnDefaultAction() {
     std::string port_str(GetWindowText(edit2_));
     int port = port_str.length() ? atoi(port_str.c_str()) : 0;
     if (q_) {
-      q_->PostTask(
-          webrtc::ToQueuedTask([&, server, port] { callback_->StartLogin(server, port); }));
+      q_->PostTask(webrtc::ToQueuedTask(
+          [&, server, port] { callback_->StartLogin(server, port); }));
     }
   } else if (ui_ == LIST_PEERS) {
     LRESULT sel = ::SendMessage(listbox_, LB_GETCURSEL, 0, 0);
@@ -353,8 +359,8 @@ void MainWnd::OnDefaultAction() {
       LRESULT peer_id = ::SendMessage(listbox_, LB_GETITEMDATA, sel, 0);
       if (peer_id != -1 && callback_) {
         if (q_) {
-          q_->PostTask(
-              webrtc::ToQueuedTask([&, peer_id] { callback_->ConnectToPeer(peer_id); }));
+          q_->PostTask(webrtc::ToQueuedTask(
+              [&, peer_id] { callback_->ConnectToPeer(peer_id); }));
         }
       }
     }
@@ -642,4 +648,19 @@ void MainWnd::VideoRenderer::OnFrame(const webrtc::VideoFrame& video_frame) {
                        buffer->width(), buffer->height());
   }
   InvalidateRect(wnd_, NULL, TRUE);
+}
+
+static std::ofstream fp("audio3.pcm", std::ios::binary);
+
+void MainWnd::AudioRenderer::OnData(const void* audio_data,
+                      int bits_per_sample,
+                      int sample_rate,
+                      size_t number_of_channels,
+                      size_t number_of_frames,
+                      absl::optional<int64_t> absolute_capture_timestamp_ms) {
+     size_t number_of_bytes = number_of_channels * number_of_frames * sizeof(uint16_t); //assuming bits_per_sample is 16
+  std::cout << "Audio frames " << number_of_frames << std::endl;
+
+   fp.write(reinterpret_cast<const char*>(audio_data), number_of_bytes);
+    fp.flush();
 }

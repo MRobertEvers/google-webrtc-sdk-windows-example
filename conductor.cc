@@ -537,6 +537,10 @@ void Conductor::UIThreadCallback(int msg_id, void* data) {
         auto* video_track = static_cast<webrtc::VideoTrackInterface*>(track);
         main_wnd_->StartRemoteRenderer(video_track);
       }
+      else if (track->kind() == webrtc::MediaStreamTrackInterface::kAudioKind) {
+        auto* audio_track = static_cast<webrtc::AudioTrackInterface*>(track);
+        main_wnd_->StartAudioLook(audio_track);
+      }
       track->Release();
       break;
     }

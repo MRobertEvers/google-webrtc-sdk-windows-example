@@ -17,6 +17,7 @@
 
 #include "api/media_stream_interface.h"
 #include "api/video/video_frame.h"
+#include "api/call/audio_sink.h"
 #include "examples/peerconnection/client/peer_connection_client.h"
 #include "media/base/media_channel.h"
 #include "media/base/video_common.h"
@@ -67,6 +68,9 @@ class MainWindow {
   virtual void StopLocalRenderer() = 0;
   virtual void StartRemoteRenderer(
       webrtc::VideoTrackInterface* remote_video) = 0;
+
+  virtual void StartAudioLook(
+      webrtc::AudioTrackInterface* audio_track) = 0;
   virtual void StopRemoteRenderer() = 0;
 
   virtual void QueueUIThreadCallback(int msg_id, void* data) = 0;
@@ -105,11 +109,28 @@ class MainWnd : public MainWindow {
   virtual void StartRemoteRenderer(webrtc::VideoTrackInterface* remote_video);
   virtual void StopRemoteRenderer();
 
+  virtual void StartAudioLook(
+      webrtc::AudioTrackInterface* audio_track);
+
   virtual void QueueUIThreadCallback(int msg_id, void* data);
 
   HWND handle() const { return wnd_; }
   
     webrtc::TaskQueueBase* q_ = nullptr;
+
+    class AudioRenderer : public webrtc::AudioTrackSinkInterface {
+     public:
+  virtual ~AudioRenderer() {}
+
+  
+  virtual void OnData(const void* audio_data,
+                      int bits_per_sample,
+                      int sample_rate,
+                      size_t number_of_channels,
+                      size_t number_of_frames,
+                      absl::optional<int64_t> absolute_capture_timestamp_ms) override;
+    };
+
   class VideoRenderer : public rtc::VideoSinkInterface<webrtc::VideoFrame> {
    public:
     VideoRenderer(HWND wnd,
