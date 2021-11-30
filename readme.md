@@ -28,6 +28,10 @@ Back in the browser, make sure loopback is set, then type `Target peer id` to `1
 
 You can debug the executables normally using Visual Studio. Simply open the .exe in Visual Studio and add the source files to the project.
 
+## Lib
+
+When building, you can find webrtc.lib in `obj/webrtc.lib`.
+
 ## Hacks
 
 I've hacked on this a bit for some testing.
